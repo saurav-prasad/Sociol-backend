@@ -3,6 +3,7 @@ const { body, validationResult } = require('express-validator')
 const credentialSchema = require('../schema/credentialSchema')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs');
+const fetchUser = require('../middleware/fetchUser');
 
 const router = express.Router()
 const JWT_SECRET = 'thisissecret'
@@ -47,9 +48,7 @@ router.post('/createuser',
 
             // token generation
             const token = jwt.sign({
-                data: {
-                    user: user.id
-                }
+                userId: user.id
             }, JWT_SECRET)
 
             success = true
@@ -107,13 +106,11 @@ router.post('/getuser',
 
             // token generation
             const token = jwt.sign({
-                data: {
-                    user: user.id
-                }
+                userId: user.id
             }, JWT_SECRET)
 
             res.send({
-                success, message: "User authenticated",token,
+                success, message: "User authenticated", token,
                 data: {
                     name: user.name,
                     userId: user.id,
@@ -129,4 +126,24 @@ router.post('/getuser',
 
 )
 
+// Route 3 : fetch user- POST => /auth/fetchuser
+
+router.post('/fetchuser', fetchUser,
+    async (req, res) => {
+        try {
+            let success
+
+            // checking if the user exist
+            const user = await credentialSchema.findById(req.userId).select('-password')
+            if (!user) {
+                success = false
+                return res.status(400).send({ success, message: "Something went wrong" })
+            }
+            success = true
+            res.send({ success, message: "User fetched", user })
+        } catch (error) {
+            success = false
+            res.send(500).send({ success, message: "Internal server error occurred" })
+        }
+    })
 module.exports = router
