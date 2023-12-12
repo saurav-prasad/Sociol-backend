@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
-
-const mongoURI = 'mongodb+srv://saurav:18042003@sociolcluster.td3gkhv.mongodb.net/?retryWrites=true&w=majority'
+require('dotenv').config()
 
 const connectToMongo = () => {
-    mongoose.connect(mongoURI).
+    mongoose.connect(process.env.MONGO_URI).
         then(() => { console.log("Connected to monogo..."); })
         .catch((err) => { console.log(err); })
 }

@@ -145,5 +145,7 @@ router.post('/fetchuser', fetchUser,
             success = false
             res.send(500).send({ success, message: "Internal server error occurred" })
         }
-    })
+    }
+)
+
 module.exports = router
