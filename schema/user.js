@@ -1,8 +1,8 @@
 const mongoose = require("mongoose")
 const { Schema } = mongoose
 
-const credentialSchema = new Schema({
-    name: {
+const userSchema = new Schema({
+    username: {
         type: String,
         required: true
     },
@@ -20,4 +20,4 @@ const credentialSchema = new Schema({
     }
 })
 
-module.exports = mongoose.model('sociol-credential', credentialSchema)
+module.exports = mongoose.model('sociol-user', userSchema)
