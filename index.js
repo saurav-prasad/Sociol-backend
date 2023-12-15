@@ -14,6 +14,7 @@ app.use(express.json())
 
 // available routes
 app.use('/auth', require('./routes/auth.js'))
+app.use('/profile',require('./routes/profile.js'))
 
 app.listen(port, (req, res) => {
     console.log("App listening at port", port);

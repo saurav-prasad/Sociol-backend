@@ -10,6 +10,7 @@ const profileSchema = new Schema({
     profilePhoto: String,
     username: String,
     phone: Number,
+    email: String,
  
 })
 

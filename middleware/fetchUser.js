@@ -14,6 +14,7 @@ const fetchUser = (req, res, next) => {
         req.userId = data.userId
         next()
     } catch (error) {
+        success = false
         res.status(400).send({ success, message: 'Please authenticate with a valid token' })
     }
 
