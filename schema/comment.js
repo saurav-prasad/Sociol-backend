@@ -9,6 +9,10 @@ const commentSchema = new Schema({
     profileId: {
         type: Schema.Types.ObjectId,
         ref: 'sociol-posts'
+    },
+    timestamp:{
+        type: Date,
+        default: Date.now()
     }
     // profilePhoto: String,
 
