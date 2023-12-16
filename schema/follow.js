@@ -5,9 +5,12 @@ const follow = new Schema({
     // profilePhoto: String,
     profileId: {
         type: Schema.Types.ObjectId,
-        ref: "sociol-followers"
+        ref: "sociol-profiles"
     },
-    userId: String
+    followerProfileId: {
+        type: Schema.Types.ObjectId,
+        ref: "sociol-profiles"
+    }
 })
 
 module.exports = mongoose.model("sociol-follow", follow)

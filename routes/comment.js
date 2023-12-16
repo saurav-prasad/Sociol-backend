@@ -68,7 +68,6 @@ router.get('/getcomment/:postId', async (req, res) => {
     }
 })
 
-
 // Route 3: Update a comment POST /comment/updatecomment/:commentId login required
 router.post('/updatecomment/:commentId', fetchUser,
     [body('comment', "Comment must be atleast of 1 character long").isLength({ min: 1 })],
