@@ -60,6 +60,7 @@ router.post('/createpost', fetchUser,
                 text: createPost.text,
                 like: createPost.like,
                 image: createPost?.image,
+                timestamp: createPost.timestamp,
             }
 
             success = true
@@ -82,8 +83,20 @@ router.get('/getpost/:postId', async (req, res) => {
             success = false
             return res.status(400).send({ success, message: "Post not found" })
         }
+        const user = await profileSchema.findById(post.profileId)
+
+        const postData = {
+            id: post.id,
+            image: post.image,
+            like: post.like,
+            text: post.text,
+            timestamp: post.timestamp,
+            profileId: user.id,
+            username: user.username,
+            profilePhoto: user.profilePhoto,
+        }
         success = true
-        res.send({ success, message: "Post found", data: post })
+        res.send({ success, message: "Post found", data: postData })
     } catch (error) {
         success = false
         res.status(500).send({ success, message: "Internal server error occurred" })
