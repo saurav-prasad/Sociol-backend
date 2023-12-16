@@ -56,18 +56,18 @@ router.get('/fetchprofile', fetchUser,
 
 // Route 3: Update a profile- POST /profile/updateprofile/:profileId => required login
 
-router.post('/updateprofile/:profileId', fetchUser,
+router.post('/updateprofile', fetchUser,
     async (req, res) => {
         let success
         try {
-            const profileId = req.params.profileId
+            // const profileId = req.params.profileId
             const { name, bio, profilePhoto, phone } = req.body
 
             const newProfileData = {}
-            if (name) { newProfileData.name = name }
-            if (bio) { newProfileData.bio = bio }
-            if (profilePhoto) { newProfileData.profilePhoto = profilePhoto }
-            if (phone) { newProfileData.phone = phone }
+            if (name) { newProfileData = { ...newProfileData, name: newProfileData.name } }
+            if (bio) { newProfileData = { ...newProfileData, bio: newProfileData.bio } }
+            if (profilePhoto) { newProfileData = { ...newProfileData, profilePhoto: newProfileData.profilePhoto } }
+            if (phone) { newProfileData = { ...newProfileData, phone: newProfileData.phone } }
 
             // find user
             let user = await userSchema.findById(req.userId)
@@ -77,14 +77,14 @@ router.post('/updateprofile/:profileId', fetchUser,
                 return res.status(400).send({ success, message: "Not allowed" })
             }
             // find user and profile
-            user = await profileSchema.findOne({ userId: req.userId, _id: profileId })
+            user = await profileSchema.findOne({ userId: req.userId })
             if (!user) {
                 success = false
                 return res.status(400).send({ success, message: "Not allowed" })
             }
 
             //  find profile and update
-            let profile = await profileSchema.findByIdAndUpdate(profileId, { $set: newProfileData }, { new: true })
+            let profile = await profileSchema.findByIdAndUpdate(user.id, { $set: newProfileData }, { new: true })
 
             if (!profile) {
                 success = false

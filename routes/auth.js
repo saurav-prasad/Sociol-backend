@@ -5,9 +5,10 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs');
 const fetchUser = require('../middleware/fetchUser');
 const profileSchema = require('../schema/profile')
+require('dotenv').config()
 
 const router = express.Router()
-const JWT_SECRET = 'thisissecret'
+const JWT_SECRET = process.env.JWT_SECRET
 
 // Route 1: Create a user- POST => /auth/createuser
 
