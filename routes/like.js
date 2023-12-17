@@ -1,0 +1,131 @@
+const express = require('express');
+const router = express.Router()
+const profileSchema = require('../schema/profile')
+const postSchema = require('../schema/post');
+const fetchUser = require('../middleware/fetchUser');
+const likeSchema = require('../schema/like');
+
+// Route 1: Like a post /like/createlike/:postId
+router.post('/createlike/:postId', fetchUser,
+    async (req, res) => {
+        let success
+        try {
+            const userId = req.userId
+            const postId = req.params.postId
+
+            const user = await profileSchema.findOne({ userId })
+            if (!user) {
+                success = false
+                return res.status(400).send({ success, message: "Not allowed" })
+            }
+            const post = await postSchema.findById(postId)
+            if (!post) {
+                success = false
+                return res.status(400).send({ success, message: "Post not found" })
+            }
+
+            const checkLike = await likeSchema.findOne({
+                profileId: user.id,
+                postId: post.id
+            })
+            if (checkLike) {
+                success = false
+                return res.send({ success, message: "Post already liked" })
+            }
+            await postSchema.findByIdAndUpdate(post.id, { like: post.like + 1 })
+
+            const like = await likeSchema.create({
+                profileId: user.id,
+                postId: post.id
+            })
+
+            success = true
+            res.send({ success, message: "Post liked", })
+
+        } catch (error) {
+            success = false
+            res.status(500).send({ success, message: "Internal server error occurred" })
+        }
+    })
+
+// Route 2: Un-like a post /like/unlike/:postId
+router.post('/unlike/:postId', fetchUser,
+    async (req, res) => {
+        let success
+        try {
+            const userId = req.userId
+            const postId = req.params.postId
+
+            const user = await profileSchema.findOne({ userId })
+            if (!user) {
+                success = false
+                return res.status(400).send({ success, message: "Not allowed" })
+            }
+            const post = await postSchema.findById(postId)
+            if (!post) {
+                success = false
+                return res.status(400).send({ success, message: "Post not found" })
+            }
+
+            const checkLike = await likeSchema.findOne({
+                profileId: user.id,
+                postId: post.id
+            })
+
+            if (!checkLike) {
+                success = false
+                return res.send({ success, message: "Post not liked, cannot unlike" })
+            }
+
+            await postSchema.findByIdAndUpdate(post.id, { like: post.like - 1 })
+
+            const like = await likeSchema.findByIdAndDelete(checkLike.id)
+
+            success = true
+            res.send({ success, message: "Post un-liked", })
+
+        } catch (error) {
+            success = false
+            res.status(500).send({ success, message: "Internal server error occurred" })
+        }
+    })
+
+// Route 3: check if a user liked a post GET /like/iflike/:postId
+router.get('/iflike/:postId', fetchUser,
+    async (req, res) => {
+        let success
+        try {
+            const userId = req.userId
+            const postId = req.params.postId
+
+            const user = await profileSchema.findOne({ userId })
+            if (!user) {
+                success = false
+                return res.status(400).send({ success, message: "Not allowed" })
+            }
+            const post = await postSchema.findById(postId)
+            if (!post) {
+                success = false
+                return res.status(400).send({ success, message: "Post not found" })
+            }
+
+            const checkLike = await likeSchema.findOne({
+                profileId: user.id,
+                postId: post.id
+            })
+
+            if (!checkLike) {
+                success = false
+                return res.send({ success, message: "Post not liked", data: { liked: false } })
+            }
+
+            success = true
+            res.send({ success, message: "Post liked", data: { liked: true } })
+
+        } catch (error) {
+            success = false
+            res.status(500).send({ success, message: "Internal server error occurred" })
+        }
+    })
+
+module.exports = router
