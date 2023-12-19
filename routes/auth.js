@@ -33,13 +33,13 @@ router.post('/createuser',
 
             if (user) {
                 success = false
-                return res.send({ success, message: "Username already taken" })
+                return res..status(400).send({ success, message: "Username already taken" })
             }
             // checking the email
             user = await userSchema.findOne({ email })
             if (user) {
                 success = false
-                return res.send({ success, message: "Email already exist" })
+                return res.status(400).send({ success, message: "Email already exist" })
             }
 
             // hashing password
@@ -105,7 +105,7 @@ router.post('/getuser',
             const user = await userSchema.findOne({ email })
             if (!user) {
                 success = false
-                return res.send({ success, message: "Either email or password incorrect" })
+                return res.status(400).send({ success, message: "Either email or password incorrect" })
             }
 
             //  check password
@@ -113,7 +113,7 @@ router.post('/getuser',
 
             if (!matchPassword) {
                 success = false
-                return res.send({ success, message: "Either email or password incorrect" })
+                return res.status(400).send({ success, message: "Either email or password incorrect" })
             }
 
             success = true
