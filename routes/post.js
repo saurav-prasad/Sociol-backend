@@ -1,6 +1,5 @@
 const express = require('express');
 const fetchUser = require('../middleware/fetchUser');
-const { body, validationResult } = require('express-validator');
 const router = express.Router()
 const profileSchema = require('../schema/profile')
 const userSchema = require('../schema/user')
@@ -9,19 +8,10 @@ const postSchema = require('../schema/post')
 // Route 1: Create a post POST /post/createpost => required login
 
 router.post('/createpost', fetchUser,
-    [body('text', 'Text should be atleast of 3 characters long').isLength({ min: 3 })]
-
-    , async (req, res) => {
+    async (req, res) => {
         let success
 
         try {
-            // ckecking if any errors exist
-            const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                success = false
-                return res.status(400).send({ success, message: errors.array()[0].msg })
-            }
-
             // checking if the user exists
             const userid = req.userId
 
@@ -35,9 +25,17 @@ router.post('/createpost', fetchUser,
                 success = false
                 return res.status(400).send({ success, message: "Not allowed" })
             }
-
-            // creating post and adding to the database
             const { text, image } = req.body
+            // checking request body
+            if (!text) {
+                success = false
+                return res.status(400).send({ success, message: 'Either text or image is required' })
+            }
+            else if (!image) {
+                success = false
+                return res.status(400).send({ success, message: 'Either text or image is required' })
+            }
+            // creating post and adding to the database
 
             let postData = {}
             if (image) { postData.image = image }

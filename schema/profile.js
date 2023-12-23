@@ -6,6 +6,7 @@ const profileSchema = new Schema({
         ref: "sociol-user"
     },
     name: String,
+    about:String,
     bio: String,
     profilePhoto: String,
     username: String,

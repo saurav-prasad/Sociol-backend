@@ -61,13 +61,14 @@ router.post('/updateprofile', fetchUser,
         let success
         try {
             // const profileId = req.params.profileId
-            const { name, bio, profilePhoto, phone } = req.body
+            const { name, bio, profilePhoto, phone ,about} = req.body
 
             const newProfileData = {}
-            if (name) { newProfileData = { ...newProfileData, name: newProfileData.name } }
-            if (bio) { newProfileData = { ...newProfileData, bio: newProfileData.bio } }
-            if (profilePhoto) { newProfileData = { ...newProfileData, profilePhoto: newProfileData.profilePhoto } }
-            if (phone) { newProfileData = { ...newProfileData, phone: newProfileData.phone } }
+            if (name) { newProfileData = { ...newProfileData, name } }
+            if (about) { newProfileData = { ...newProfileData, about } }
+            if (bio) { newProfileData = { ...newProfileData, bio } }
+            if (profilePhoto) { newProfileData = { ...newProfileData, profilePhoto } }
+            if (phone) { newProfileData = { ...newProfileData, phone } }
 
             // find user
             let user = await userSchema.findById(req.userId)
