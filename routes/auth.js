@@ -53,7 +53,7 @@ router.post('/createuser',
                 email,
                 phone
             })
-            await profileSchema.create({
+            const profileData = await profileSchema.create({
                 username,
                 email,
                 phone,
@@ -69,10 +69,12 @@ router.post('/createuser',
             res.send({
                 success,
                 data: {
+                    username: user.name,
                     userId: user.id,
-                    name: user.name,
                     email: user.email,
-                    phone: user?.phone
+                    phone: user?.phone,
+                    profilePhoto: profileData.profilePhoto,
+                    profileId: profileData.id,
                 },
                 token, message: "User created successfully"
             })
@@ -118,6 +120,8 @@ router.post('/getuser',
 
             success = true
 
+            const profileData = await profileSchema.findOne({ userId: user.id })
+
             // token generation
             const token = jwt.sign({
                 userId: user.id
@@ -126,10 +130,15 @@ router.post('/getuser',
             res.send({
                 success, message: "User authenticated", token,
                 data: {
-                    name: user.name,
+                    name: profileData?.name,
                     userId: user.id,
                     email: user.email,
-                    phone: user?.phone
+                    phone: user?.phone,
+                    profileId: profileData.id,
+                    profilePhoto: profileData.profilePhoto,
+                    username: profileData.username,
+                    about: profileData?.about,
+                    bio: profileData?.bio
                 }
             })
         } catch (err) {
@@ -154,7 +163,22 @@ router.post('/fetchuser', fetchUser,
                 return res.status(400).send({ success, message: "Something went wrong" })
             }
             success = true
-            res.send({ success, message: "User fetched", data: user })
+            const profileData = await profileSchema.findOne({ userId: user.id })
+
+            res.send({
+                success, message: "User authenticated", token,
+                data: {
+                    name: profileData?.name,
+                    userId: user.id,
+                    email: user.email,
+                    phone: user?.phone,
+                    profileId: profileData.id,
+                    profilePhoto: profileData.profilePhoto,
+                    username: profileData.username,
+                    about: profileData?.about,
+                    bio: profileData?.bio
+                }
+            })
         } catch (error) {
             success = false
             res.send(500).send({ success, message: "Internal server error occurred" })
