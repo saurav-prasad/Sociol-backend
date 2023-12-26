@@ -4,6 +4,16 @@ const profileSchema = require('../schema/profile');
 const fetchUser = require('../middleware/fetchUser');
 const userSchema = require('../schema/user');
 
+function isEmail(emailAdress) {
+    let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+    if (emailAdress.match(regex))
+        return true;
+
+    else
+        return false;
+}
+
 // Route 1: Read a profile- POST /profile/getprofile/:profileId => not required login
 
 router.get('/getprofile/:profileId', async (req, res) => {
@@ -61,9 +71,9 @@ router.post('/updateprofile', fetchUser,
         let success
         try {
             // const profileId = req.params.profileId
-            const { name, bio, profilePhoto, phone ,about} = req.body
+            const { name, bio, profilePhoto, phone, about, } = req.body
 
-            const newProfileData = {}
+            let newProfileData = {}
             if (name) { newProfileData = { ...newProfileData, name } }
             if (about) { newProfileData = { ...newProfileData, about } }
             if (bio) { newProfileData = { ...newProfileData, bio } }
@@ -95,6 +105,7 @@ router.post('/updateprofile', fetchUser,
             res.send({ success, message: "Profile updated", data: profile })
 
         } catch (error) {
+            console.log(error);
             success = false
             res.status(500).send({ success, message: "Internal server error occurred" })
         }

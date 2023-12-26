@@ -69,7 +69,7 @@ router.post('/createuser',
             res.send({
                 success,
                 data: {
-                    username: user.name,
+                    username: user.username,
                     userId: user.id,
                     email: user.email,
                     phone: user?.phone,
