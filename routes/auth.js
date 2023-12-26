@@ -10,7 +10,7 @@ require('dotenv').config()
 const router = express.Router()
 const JWT_SECRET = process.env.JWT_SECRET
 
-// Route 1: Create a user- POST => /auth/createuser
+// Route 1: Create a user- POST => /auth/createuser Login required
 
 router.post('/createuser',
     // request body validation
@@ -86,7 +86,7 @@ router.post('/createuser',
     }
 )
 
-// Route 2: Signin user- POST => /auth/getuser
+// Route 2: Signin user- POST => /auth/getuser Login required
 
 router.post('/getuser',
     [body('email', "Enter a valid email").isEmail(),
@@ -149,9 +149,9 @@ router.post('/getuser',
 
 )
 
-// Route 3 : fetch user- POST => /auth/fetchuser
+// Route 3 : fetch user- GET => /auth/fetchuser Not login required
 
-router.post('/fetchuser', fetchUser,
+router.get('/fetchuser', fetchUser,
     async (req, res) => {
         try {
             let success
@@ -166,7 +166,7 @@ router.post('/fetchuser', fetchUser,
             const profileData = await profileSchema.findOne({ userId: user.id })
 
             res.send({
-                success, message: "User authenticated", token,
+                success, message: "User authenticated",
                 data: {
                     name: profileData?.name,
                     userId: user.id,
@@ -180,8 +180,9 @@ router.post('/fetchuser', fetchUser,
                 }
             })
         } catch (error) {
+            console.log(error);
             success = false
-            res.send(500).send({ success, message: "Internal server error occurred" })
+            res.status(500).send({ success, message: "Internal server error occurred" })
         }
     }
 )
