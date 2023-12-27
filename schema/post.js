@@ -5,7 +5,6 @@ const postSchema = new Schema({
     like: Number,
     text: {
         type: String,
-        required: true
     },
     profileId: {
         type: Schema.Types.ObjectId,

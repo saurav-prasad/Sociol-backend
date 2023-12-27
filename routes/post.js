@@ -3,7 +3,7 @@ const fetchUser = require('../middleware/fetchUser');
 const router = express.Router()
 const profileSchema = require('../schema/profile')
 const userSchema = require('../schema/user')
-const postSchema = require('../schema/post')
+const postSchema = require('../schema/post');
 
 // Route 1: Create a post POST /post/createpost => required login
 
@@ -27,11 +27,7 @@ router.post('/createpost', fetchUser,
             }
             const { text, image } = req.body
             // checking request body
-            if (!text) {
-                success = false
-                return res.status(400).send({ success, message: 'Either text or image is required' })
-            }
-            else if (!image) {
+            if (!text && !image) {
                 success = false
                 return res.status(400).send({ success, message: 'Either text or image is required' })
             }
@@ -39,9 +35,9 @@ router.post('/createpost', fetchUser,
 
             let postData = {}
             if (image) { postData.image = image }
+            if (text) { postData.text = text }
             postData = {
                 ...postData,
-                text,
                 userId: user.userId,
                 profileId: user.id,
                 like: 0,
@@ -53,6 +49,7 @@ router.post('/createpost', fetchUser,
             const newPostData = {
                 profilePhoto: user.profilePhoto,
                 username: user.username,
+                about: user?.about,
                 profileId: createPost.profileId,
                 id: createPost.id,
                 text: createPost.text,
@@ -92,6 +89,7 @@ router.get('/getpost/:postId', async (req, res) => {
             profileId: user.id,
             username: user.username,
             profilePhoto: user.profilePhoto,
+            about: user?.about
         }
         success = true
         res.send({ success, message: "Post found", data: postData })
@@ -101,7 +99,80 @@ router.get('/getpost/:postId', async (req, res) => {
     }
 })
 
-// Route 3: Update a post POST /post/update/:postId => login required
+//  Route 3: Get all post GET /post/getallpost => no login required
+
+router.get('/getallpost', async (req, res) => {
+    let success
+    try {
+        const posts = await postSchema.find({})
+        if (!posts) {
+            success = false
+            return res.status(400).send({ success, message: 'Something went wrong' })
+        }
+
+        const postsData = await Promise.all(posts.map(async (data) => {
+            // console.log(data);
+            const user = await profileSchema.findById(data.profileId)
+            // console.log(user);
+            return {
+                id: data.id,
+                image: data?.image,
+                like: data?.like,
+                text: data?.text,
+                timestamp: data.timestamp,
+                profileId: user.id,
+                username: user.username,
+                profilePhoto: user.profilePhoto,
+                about: user?.about
+            }
+        }))
+
+        success = true
+        res.send({ success, message: "Post found", data: postsData })
+    } catch (error) {
+        success = false
+        res.status(500).send({ success, message: "Internal server error occurred" })
+    }
+})
+//  Route 4: Get all post GET /post/fetchpost => login required
+
+router.get('/fetchpost', fetchUser, async (req, res) => {
+    let success
+    try {
+        const userId = req.userId
+        const profile = await profileSchema.findOne({ userId })
+        if (!profile) {
+            success = false
+            return res.status(400).send({ success, message: 'Profile not found' })
+        }
+        const posts = await postSchema.find({ profileId: profile.id })
+        if (!posts) {
+            success = false
+            return res.status(400).send({ success, message: 'Posts not found' })
+        }
+        const postsData = posts.map((data) => {
+            return {
+                id: data.id,
+                image: data?.image,
+                like: data?.like,
+                text: data?.text,
+                timestamp: data.timestamp,
+                profileId: profile.id,
+                username: profile.username,
+                profilePhoto: profile.profilePhoto,
+                about: profile?.about
+            }
+        })
+
+        success = true
+        res.send({ success, message: "Post fetched", data: postsData })
+    } catch (error) {
+        success = false
+        res.status(500).send({ success, message: "Internal server error occurred" })
+    }
+})
+
+// Route 5: Update a post POST /post/update/:postId => login required
 
 router.post('/updatepost/:postId', fetchUser,
     async (req, res) => {
@@ -139,7 +210,7 @@ router.post('/updatepost/:postId', fetchUser,
     })
 
 
-//  Route 4: Deleting a post DELETE /post/deletepost/:postId => login required
+//  Route 6: Deleting a post DELETE /post/deletepost/:postId => login required
 
 router.delete('/deletepost/:postId', fetchUser,
     async (req, res) => {
