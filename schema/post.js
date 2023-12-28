@@ -18,8 +18,8 @@ const postSchema = new Schema({
     // profilePhoto: String,
     timestamp: {
         type: Date,
-        default: Date.now()
-    }
+        default: () => Date.now(),
+    },
 })
 
 module.exports = mongoose.model("sociol-post", postSchema)
