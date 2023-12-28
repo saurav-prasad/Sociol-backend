@@ -193,7 +193,11 @@ router.post('/updatepost/:postId', fetchUser,
                 success = false
                 return res.status(400).send({ success, message: "Post not found" })
             }
-
+            // checking request body
+            if (!text && !image) {
+                success = false
+                return res.status(400).send({ success, message: 'Either text or image is required' })
+            }
             // creating a new post
             const { text, image } = req.body
             let newPost = {}
