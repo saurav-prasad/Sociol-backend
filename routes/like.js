@@ -5,8 +5,8 @@ const postSchema = require('../schema/post');
 const fetchUser = require('../middleware/fetchUser');
 const likeSchema = require('../schema/like');
 
-// Route 1: Like a post /like/createlike/:postId
-router.post('/createlike/:postId', fetchUser,
+// Route 1: Like a post GET /like/createlike/:postId
+router.get('/like/:postId', fetchUser,
     async (req, res) => {
         let success
         try {
@@ -30,7 +30,7 @@ router.post('/createlike/:postId', fetchUser,
             })
             if (checkLike) {
                 success = false
-                return res.send({ success, message: "Post already liked" })
+                return res.send({ success, message: "Post already liked", data: { liked: false } })
             }
             await postSchema.findByIdAndUpdate(post.id, { like: post.like + 1 })
 
@@ -40,7 +40,7 @@ router.post('/createlike/:postId', fetchUser,
             })
 
             success = true
-            res.send({ success, message: "Post liked", })
+            res.send({ success, message: "Post liked", data: { liked: true } })
 
         } catch (error) {
             success = false
@@ -48,8 +48,8 @@ router.post('/createlike/:postId', fetchUser,
         }
     })
 
-// Route 2: Un-like a post /like/unlike/:postId
-router.post('/unlike/:postId', fetchUser,
+// Route 2: Un-like a post GET /like/unlike/:postId
+router.get('/unlike/:postId', fetchUser,
     async (req, res) => {
         let success
         try {
@@ -74,7 +74,7 @@ router.post('/unlike/:postId', fetchUser,
 
             if (!checkLike) {
                 success = false
-                return res.send({ success, message: "Post not liked, cannot unlike" })
+                return res.send({ success, message: "Post not liked, cannot unlike", data: { unLiked: false } })
             }
 
             await postSchema.findByIdAndUpdate(post.id, { like: post.like - 1 })
@@ -82,7 +82,7 @@ router.post('/unlike/:postId', fetchUser,
             const like = await likeSchema.findByIdAndDelete(checkLike.id)
 
             success = true
-            res.send({ success, message: "Post un-liked", })
+            res.send({ success, message: "Post un-liked", data: { unLiked: true } })
 
         } catch (error) {
             success = false
@@ -115,7 +115,7 @@ router.get('/iflike/:postId', fetchUser,
             })
 
             if (!checkLike) {
-                success = false
+                success = true
                 return res.send({ success, message: "Post not liked", data: { liked: false } })
             }
 

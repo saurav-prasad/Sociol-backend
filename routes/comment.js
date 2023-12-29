@@ -41,6 +41,7 @@ router.post('/createcomment/:postId', fetchUser,
                 postId: post.id,
                 profileId: user.id
             })
+            await postSchema.findByIdAndUpdate(post.id, { comment: post.comment + 1 })
 
             success = true
             res.send({ success, message: 'Commented', data: createComment })
@@ -129,8 +130,16 @@ router.delete('/deletecomment/:commentId', fetchUser,
                 success = false
                 return res.status(400).send({ success, message: "Comment not found" })
             }
+            // checking if the post exists
+            const post = await postSchema.findById(comment.postId)
+            if (!post) {
+                success = false
+                return res.status(400).send({ success, message: "Post not found" })
+            }
             //  deleting comment
-            const deleteComment = await commentSchema.findByIdAndDelete(comment.id)
+            await commentSchema.findByIdAndDelete(comment.id)
+            await postSchema.findByIdAndUpdate(post.id, { comment: post.comment - 1 })
+
             success = true
             res.send({ success, message: "Comment deleted" })
         } catch (error) {

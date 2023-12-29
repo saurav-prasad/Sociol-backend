@@ -3,6 +3,7 @@ const { Schema, default: mongoose } = require("mongoose");
 const postSchema = new Schema({
     image: String,
     like: Number,
+    comment: Number,
     text: {
         type: String,
     },

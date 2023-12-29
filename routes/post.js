@@ -41,11 +41,12 @@ router.post('/createpost', fetchUser,
                 userId: user.userId,
                 profileId: user.id,
                 like: 0,
+                comment: 0,
             }
 
             // 5tilak 11barat  
             const createPost = await postSchema.create(postData)
-
+            // console.log(createPost);
             const newPostData = {
                 profilePhoto: user.profilePhoto,
                 username: user.username,
@@ -54,6 +55,7 @@ router.post('/createpost', fetchUser,
                 id: createPost.id,
                 text: createPost.text,
                 like: createPost.like,
+                comment: createPost.comment,
                 image: createPost?.image,
                 timestamp: createPost.timestamp,
             }
@@ -84,6 +86,7 @@ router.get('/getpost/:postId', async (req, res) => {
             id: post.id,
             image: post.image,
             like: post.like,
+            comment: post.comment,
             text: post.text,
             timestamp: post.timestamp,
             profileId: user.id,
@@ -118,6 +121,7 @@ router.get('/getallpost', async (req, res) => {
                 id: data.id,
                 image: data?.image,
                 like: data?.like,
+                comment: data?.comment,
                 text: data?.text,
                 timestamp: data.timestamp,
                 profileId: user.id,
@@ -155,6 +159,7 @@ router.get('/fetchpost', fetchUser, async (req, res) => {
                 id: data.id,
                 image: data?.image,
                 like: data?.like,
+                comment: data?.comment,
                 text: data?.text,
                 timestamp: data.timestamp,
                 profileId: profile.id,
