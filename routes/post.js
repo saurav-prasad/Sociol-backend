@@ -193,21 +193,28 @@ router.post('/updatepost/:postId', fetchUser,
                 success = false
                 return res.status(400).send({ success, message: "Post not found" })
             }
+            const { text, image } = req.body
             // checking request body
             if (!text && !image) {
                 success = false
                 return res.status(400).send({ success, message: 'Either text or image is required' })
             }
             // creating a new post
-            const { text, image } = req.body
             let newPost = {}
-            if (text) { newPost = { ...newPost, text } }
-            if (image) { newPost = { ...newPost, image } }
+            // text
+            if (text === false) {
+                newPost = { ...newPost, text: false }
+            } else { newPost = { ...newPost, text } }
+            // image
+            if (image === false) {
+                newPost = { ...newPost, image: false }
+            } else { newPost = { ...newPost, image } }
 
             const post = await postSchema.findByIdAndUpdate(postId, { $set: newPost }, { new: true }).select("-userId")
             success = true
             res.send({ success, message: "Post updated", data: post })
         } catch (error) {
+            console.log(error);
             success = false
             res.status(500).send({ success, message: "Internal server error occurred" })
         }
