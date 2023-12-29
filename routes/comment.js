@@ -42,9 +42,20 @@ router.post('/createcomment/:postId', fetchUser,
                 profileId: user.id
             })
             await postSchema.findByIdAndUpdate(post.id, { comment: post.comment + 1 })
+            console.log(createComment);
+
+            const commentData = {
+                id: createComment.id,
+                comment: createComment.comment,
+                postId: createComment.postId,
+                profileId: createComment.profileId,
+                username: user.username,
+                profilePhoto: user.profilePhoto,
+                timestamp: createComment.id
+            }
 
             success = true
-            res.send({ success, message: 'Commented', data: createComment })
+            res.send({ success, message: 'Commented', data: commentData })
         } catch (error) {
             success = false
             res.status(500).send({ success, message: "Internal server error occurred" })
@@ -55,14 +66,35 @@ router.post('/createcomment/:postId', fetchUser,
 router.get('/getcomment/:postId', async (req, res) => {
     let success
     try {
+        // check if the post exitst
         const post = await postSchema.findById(req.params.postId)
         if (!post) {
             success = false
             return res.status(400).send({ success, message: "Post not found" })
         }
+
+        // fetching comments
         const comments = await commentSchema.find({ postId: post.id })
+
+        const commentData = await Promise.all(comments.map(async (data) => {
+
+            // fetching profile details
+            const profile = await profileSchema.findById(data.profileId)
+
+            return {
+                comment: data.comment,
+                postId: data.postId,
+                profileId: data.profileId,
+                timestamp: data.timestamp,
+                id: data.id,
+                username: profile.username,
+                profilePhoto: profile.profilePhoto
+            }
+        }))
+
+        console.log(commentData);
         success = true
-        res.send({ success, message: "Comments found", data: comments })
+        res.send({ success, message: "Comments found", data: commentData })
     } catch (error) {
         success = false
         res.status(500).send({ success, message: "Internal server error occurred" })
@@ -102,7 +134,13 @@ router.post('/updatecomment/:commentId', fetchUser,
                 { new: true })
 
             success = true
-            res.send({ success, message: "Comment updated", data: updatedComment })
+            res.send({
+                success, message: "Comment updated", data: {
+                    ...updatedComment,
+                    username: user.username,
+                    profilePhoto: user.profilePhoto
+                }
+            })
         } catch (error) {
             success = false
             res.status(500).send({ success, message: "Internal server error occurred" })
