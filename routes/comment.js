@@ -51,7 +51,7 @@ router.post('/createcomment/:postId', fetchUser,
                 profileId: createComment.profileId,
                 username: user.username,
                 profilePhoto: user.profilePhoto,
-                timestamp: createComment.id
+                timestamp: createComment.timestamp
             }
 
             success = true
