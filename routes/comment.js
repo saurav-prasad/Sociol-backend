@@ -42,7 +42,6 @@ router.post('/createcomment/:postId', fetchUser,
                 profileId: user.id
             })
             await postSchema.findByIdAndUpdate(post.id, { comment: post.comment + 1 })
-            console.log(createComment);
 
             const commentData = {
                 id: createComment.id,
@@ -96,6 +95,7 @@ router.get('/getcomment/:postId', async (req, res) => {
         success = true
         res.send({ success, message: "Comments found", data: commentData })
     } catch (error) {
+        console.log(error);
         success = false
         res.status(500).send({ success, message: "Internal server error occurred" })
     }

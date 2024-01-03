@@ -69,7 +69,7 @@ router.post('/createpost', fetchUser,
         }
     })
 
-//  Route 2: Get a post GET /post/getpost/:postId => no login required
+//  Route 2: Get a post by postId GET /post/getpost/:postId => no login required
 
 router.get('/getpost/:postId', async (req, res) => {
     let success
@@ -101,8 +101,43 @@ router.get('/getpost/:postId', async (req, res) => {
         res.status(500).send({ success, message: "Internal server error occurred" })
     }
 })
+//  Route 3: Get a post by profileId GET /post/getpostbyprofileid/:profileId => no login required
 
-//  Route 3: Get all post GET /post/getallpost => no login required
+router.get('/getpostbyprofileid/:profileId', async (req, res) => {
+    let success
+    try {
+        const profileId = req.params.profileId
+        const profile = await profileSchema.findById(profileId)
+        if (!profile) {
+            success = false
+            return res.status(400).send({ success, message: "Profile not found" })
+        }
+        const posts = await postSchema.find({ profileId })
+
+        const postsData = await Promise.all(posts.map(async (data) => {
+            return {
+                id: data.id,
+                image: data?.image,
+                like: data?.like,
+                comment: data?.comment,
+                text: data?.text,
+                timestamp: data.timestamp,
+                profileId: profile.id,
+                username: profile.username,
+                profilePhoto: profile.profilePhoto,
+                about: profile?.about
+            }
+        }))
+
+        success = true
+        res.send({ success, message: "Post found", data: postsData })
+    } catch (error) {
+        success = false
+        res.status(500).send({ success, message: "Internal server error occurred" })
+    }
+})
+
+//  Route 4: Get all post GET /post/getallpost => no login required
 
 router.get('/getallpost', async (req, res) => {
     let success
@@ -138,7 +173,7 @@ router.get('/getallpost', async (req, res) => {
         res.status(500).send({ success, message: "Internal server error occurred" })
     }
 })
-//  Route 4: Get all post GET /post/fetchpost => login required
+//  Route 5: Get all post GET /post/fetchpost => login required
 
 router.get('/fetchpost', fetchUser, async (req, res) => {
     let success
@@ -177,7 +212,7 @@ router.get('/fetchpost', fetchUser, async (req, res) => {
     }
 })
 
-// Route 5: Update a post POST /post/update/:postId => login required
+// Route 6: Update a post POST /post/update/:postId => login required
 
 router.post('/updatepost/:postId', fetchUser,
     async (req, res) => {
@@ -226,7 +261,7 @@ router.post('/updatepost/:postId', fetchUser,
     })
 
 
-//  Route 6: Deleting a post DELETE /post/deletepost/:postId => login required
+//  Route 7: Deleting a post DELETE /post/deletepost/:postId => login required
 
 router.delete('/deletepost/:postId', fetchUser,
     async (req, res) => {

@@ -14,7 +14,7 @@ function isEmail(emailAdress) {
         return false;
 }
 
-// Route 1: Read a profile- POST /profile/getprofile/:profileId => not required login
+// Route 1: Read a profile- GET /profile/getprofile/:profileId => not required login
 
 router.get('/getprofile/:profileId', async (req, res) => {
     let success
@@ -28,15 +28,28 @@ router.get('/getprofile/:profileId', async (req, res) => {
         }
 
         success = true
-        res.send({
-            success, message: "Profile found", data: {
-                profileId: profile.id,
-                profilePhoto: profile.profilePhoto,
-                username: profile.username,
-                bio: profile.bio,
-                name: profile.name
-            }
-        })
+        res.send({ success, message: "Profile found", data: profile })
+
+    } catch (error) {
+        success = false
+        res.status(500).send({ success, message: "Internal server error occurred" })
+    }
+})
+// Route 2: Read a profile- GET /profile/getprofile/:username => not required login
+
+router.get('/getprofilebyusername/:username', async (req, res) => {
+    let success
+    try {
+        const username = req.params.username
+
+        const profile = await profileSchema.findOne({ username })
+        if (!profile) {
+            success = false
+            return res.status(400).send({ success, message: "Profile not found" })
+        }
+
+        success = true
+        res.send({ success, message: "Profile found", data: profile })
 
     } catch (error) {
         success = false
@@ -44,7 +57,7 @@ router.get('/getprofile/:profileId', async (req, res) => {
     }
 })
 
-// Route 2: Read a profile- POST /profile/getprofile/:profileId => required login
+// Route 3: Read a profile- POST /profile/getprofile/:profileId => required login
 
 router.get('/fetchprofile', fetchUser,
     async (req, res) => {
@@ -64,7 +77,7 @@ router.get('/fetchprofile', fetchUser,
         }
     })
 
-// Route 3: Update a profile- POST /profile/updateprofile/:profileId => required login
+// Route 4: Update a profile- POST /profile/updateprofile/:profileId => required login
 
 router.post('/updateprofile', fetchUser,
     async (req, res) => {
