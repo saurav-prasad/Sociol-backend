@@ -143,6 +143,7 @@ router.post('/getuser',
                 }
             })
         } catch (err) {
+            console.log(err);
             success = false
             res.status(500).send({ success, message: "Internal server error occurred" })
         }

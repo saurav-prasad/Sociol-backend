@@ -157,8 +157,7 @@ router.get('/getfollowers/:profileId', async (req, res) => {
 
                 return {
                     id: data.id,
-                    profileId: data.profileId,
-                    followerProfileId: data.followerProfileId,
+                    profileId: profileData.id,
                     profilePhoto: profileData.profilePhoto,
                     username: profileData.username,
                     about: profileData.about
@@ -175,7 +174,7 @@ router.get('/getfollowers/:profileId', async (req, res) => {
 })
 
 // Route 5: Get all following profiles  GET /follow/getfollowing -> no login required
-router.get('/getfollowing/:profileId', async (req, res) => {
+router.get('/getfollowings/:profileId', async (req, res) => {
     try {
         let success
         const userId = req.params.profileId
@@ -199,8 +198,7 @@ router.get('/getfollowing/:profileId', async (req, res) => {
 
                 return {
                     id: data.id,
-                    profileId: data.profileId,
-                    followerProfileId: data.followerProfileId,
+                    profileId: profileData.id,
                     profilePhoto: profileData.profilePhoto,
                     username: profileData.username,
                     about: profileData.about
@@ -228,7 +226,7 @@ router.get('/gettotalfollowers/:profileId', async (req, res) => {
             return res.status(400).send({ success, message: "Profile not found" })
         }
         const followers = await followSchema.find({ profileId })
-
+        
         success = true
         res.send({ success, message: "Followers present", data: { totalFollowers: followers?.length } })
     } catch (error) {
@@ -238,7 +236,7 @@ router.get('/gettotalfollowers/:profileId', async (req, res) => {
 })
 
 // Route 7 : Get all following profiles  GET /follow/gettotalfollowing ->  not login required
-router.get('/gettotalfollowing/:profileId', async (req, res) => {
+router.get('/gettotalfollowings/:profileId', async (req, res) => {
     try {
         let success
         const userId = req.params.profileId
