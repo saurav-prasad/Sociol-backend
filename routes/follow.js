@@ -4,8 +4,9 @@ const router = express.Router()
 const profileSchema = require('../schema/profile')
 const followSchema = require('../schema/follow')
 
-// Route 1: Follow a profile POST /follow/createfollow/:profileId
-router.post('/createfollow/:profileId', fetchUser,
+
+// Route 1: Follow a profile POST /follow/createfollow/:profileId -> login required
+router.get('/createfollow/:profileId', fetchUser,
     async (req, res) => {
         let success
         try {
@@ -51,8 +52,8 @@ router.post('/createfollow/:profileId', fetchUser,
     })
 
 
-// Route 2: Unfollow a profile DELETE /follow/unfollow/:profileId
-router.delete('/unfollow/:profileId', fetchUser,
+// Route 2: Unfollow a profile DELETE /follow/unfollow/:profileId -> login required
+router.get('/unfollow/:profileId', fetchUser,
     async (req, res) => {
         let success
         try {
@@ -96,7 +97,7 @@ router.delete('/unfollow/:profileId', fetchUser,
     })
 
 
-// Route 3: Check if a user follows a profile GET /follow/iffollow/:profileId
+// Route 3: Check if a user follows a profile GET /follow/iffollow/:profileId -> login required
 router.get('/iffollow/:profileId', fetchUser,
     async (req, res) => {
         let success;
@@ -132,8 +133,8 @@ router.get('/iffollow/:profileId', fetchUser,
         }
     })
 
-// Route 4: Get all followers GET /follow/followers/:profileId -> not login required
-router.get('/followers/:profileId', async (req, res) => {
+// Route 4: Get all followers GET /follow/getfollowers/:profileId -> no login required
+router.get('/getfollowers/:profileId', async (req, res) => {
     try {
         let success
         const profileId = req.params.profileId
@@ -147,7 +148,7 @@ router.get('/followers/:profileId', async (req, res) => {
 
         if (followers?.length === 0) {
             success = true
-            return res.send({ success, message: "No followers", data: {} })
+            return res.send({ success, message: "No followers", data: [] })
         }
 
         const followersData = await Promise.all(
@@ -159,7 +160,8 @@ router.get('/followers/:profileId', async (req, res) => {
                     profileId: data.profileId,
                     followerProfileId: data.followerProfileId,
                     profilePhoto: profileData.profilePhoto,
-                    username: profileData.username
+                    username: profileData.username,
+                    about: profileData.about
                 };
             })
         );
@@ -172,46 +174,90 @@ router.get('/followers/:profileId', async (req, res) => {
     }
 })
 
-// Route 5: Get all following profiles  GET /follow/following ->  login required
-router.get('/following', fetchUser,
-    async (req, res) => {
-        try {
-            let success
-            const userId = req.userId
-            // checking user
-            const user = await profileSchema.findOne({ userId })
-            if (!user) {
-                success = false
-                return res.status(400).send({ success, message: "Not allowed" })
-            }
-
-            const following = await followSchema.find({ followerProfileId: user.id })
-
-            if (following?.length === 0) {
-                success = true
-                return res.send({ success, message: "No profile following", data: {} })
-            }
-
-            const followingData = await Promise.all(
-                following.map(async (data) => {
-                    const profileData = await profileSchema.findById(data.profileId);
-
-                    return {
-                        id: data.id,
-                        profileId: data.profileId,
-                        followerProfileId: data.followerProfileId,
-                        profilePhoto: profileData.profilePhoto,
-                        username: profileData.username
-                    };
-                })
-            );
-
-            success = true
-            res.send({ success, message: "Following profiles", data: followingData })
-        } catch (error) {
+// Route 5: Get all following profiles  GET /follow/getfollowing -> no login required
+router.get('/getfollowing/:profileId', async (req, res) => {
+    try {
+        let success
+        const userId = req.params.profileId
+        // checking user
+        const user = await profileSchema.findById(userId)
+        if (!user) {
             success = false
-            res.status(500).send({ success, message: "Internal server error occurred" })
+            return res.status(400).send({ success, message: "Profile not found" })
         }
-    })
+
+        const following = await followSchema.find({ followerProfileId: user.id })
+
+        if (following?.length === 0) {
+            success = true
+            return res.send({ success, message: "No profile following", data: [] })
+        }
+
+        const followingData = await Promise.all(
+            following.map(async (data) => {
+                const profileData = await profileSchema.findById(data.profileId);
+
+                return {
+                    id: data.id,
+                    profileId: data.profileId,
+                    followerProfileId: data.followerProfileId,
+                    profilePhoto: profileData.profilePhoto,
+                    username: profileData.username,
+                    about: profileData.about
+                };
+            })
+        );
+
+        success = true
+        res.send({ success, message: "Following profiles", data: followingData })
+    } catch (error) {
+        success = false
+        res.status(500).send({ success, message: "Internal server error occurred" })
+    }
+})
+
+// Route 6: Get all followers GET /follow/gettotalfollowers/:profileId -> not login required
+router.get('/gettotalfollowers/:profileId', async (req, res) => {
+    try {
+        let success
+        const profileId = req.params.profileId
+
+        const profile = await profileSchema.findById(profileId)
+        if (!profile) {
+            success = false
+            return res.status(400).send({ success, message: "Profile not found" })
+        }
+        const followers = await followSchema.find({ profileId })
+
+        success = true
+        res.send({ success, message: "Followers present", data: { totalFollowers: followers?.length } })
+    } catch (error) {
+        success = false
+        res.status(500).send({ success, message: "Internal server error occurred" })
+    }
+})
+
+// Route 7 : Get all following profiles  GET /follow/gettotalfollowing ->  not login required
+router.get('/gettotalfollowing/:profileId', async (req, res) => {
+    try {
+        let success
+        const userId = req.params.profileId
+        // checking user
+        const user = await profileSchema.findById(userId)
+        if (!user) {
+            success = false
+            return res.status(400).send({ success, message: "Profile not found" })
+        }
+
+        const following = await followSchema.find({ followerProfileId: user.id })
+
+        success = true
+        res.send({ success, message: "Following profiles", data: { totalFollowings: following?.length } })
+    } catch (error) {
+        success = false
+        res.status(500).send({ success, message: "Internal server error occurred" })
+    }
+})
+
 
 module.exports = router

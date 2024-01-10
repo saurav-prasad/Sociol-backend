@@ -84,15 +84,34 @@ router.post('/updateprofile', fetchUser,
         let success
         try {
             // const profileId = req.params.profileId
-            const { name, bio, profilePhoto, phone, about, } = req.body
+            const { name, bio, profilePhoto, phone, about, username, email } = req.body
 
             let newProfileData = {}
+            let newAuthUserData = {}
             if (name) { newProfileData = { ...newProfileData, name } }
             if (about) { newProfileData = { ...newProfileData, about } }
             if (bio) { newProfileData = { ...newProfileData, bio } }
             if (profilePhoto) { newProfileData = { ...newProfileData, profilePhoto } }
             if (phone) { newProfileData = { ...newProfileData, phone } }
+            if (username) {
+                if (username.length >= 3) {
+                    newAuthUserData = { ...newAuthUserData, username }
+                }
+                else {
+                    success = false
+                    return res.status(400).send({ success, message: "Username should be atleast of 3 characters long" })
+                }
+            }
+            if (email) {
 
+                if (isEmail(email)) {
+                    newAuthUserData = { ...newAuthUserData, email }
+                }
+                else {
+                    success = false
+                    return res.status(400).send({ success, message: "Please enter a valid email" })
+                }
+            }
             // find user
             let user = await userSchema.findById(req.userId)
 
@@ -107,13 +126,45 @@ router.post('/updateprofile', fetchUser,
                 return res.status(400).send({ success, message: "Not allowed" })
             }
 
+            // TODO  find user and update
+
+
+            // checking the email
+            if (newAuthUserData.email && newAuthUserData.email != user.email) {
+                const user1 = await userSchema.findOne({ email })
+                if (user1) {
+                    success = false
+                    return res.status(400).send({ success, message: "Email already exist" })
+                }
+                else {
+                    let authUser = await userSchema.findByIdAndUpdate(user.userId, { email: email }, { new: true })
+                    newProfileData = { ...newProfileData, email }
+                }
+            }
+
+            // checking the username
+            if (newAuthUserData.username && newAuthUserData.username != user.username) {
+                // checking the email
+                const user1 = await userSchema.findOne({ username })
+                if (user1) {
+                    success = false
+                    return res.status(400).send({ success, message: "Username already taken" })
+                }
+                else {
+                    let authUser = await userSchema.findByIdAndUpdate(user.userId, { username: username }, { new: true })
+                    newProfileData = { ...newProfileData, username }
+                }
+            }
+
             //  find profile and update
             let profile = await profileSchema.findByIdAndUpdate(user.id, { $set: newProfileData }, { new: true })
 
             if (!profile) {
                 success = false
-                return res.status(400).send({ success, message: "Profile not found" })
+                return res.status(400).send({ success, message: "Something went wrong" })
             }
+
+
             success = true
             res.send({ success, message: "Profile updated", data: profile })
 

@@ -16,6 +16,7 @@ router.post('/createuser',
     // request body validation
     [body('email', 'Enter a valid email').isEmail(),
     body('username', 'Username should be atleast of 3 characters long').isLength({ min: 3 }),
+    body('username', 'Username should not be greater than 15 characters').isLength({ max: 15 }),
     body('password', "Password should be atleast of 6 characters long").isLength({ min: 6 })],
 
     async (req, res) => {
