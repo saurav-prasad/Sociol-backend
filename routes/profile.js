@@ -97,6 +97,10 @@ router.post('/updateprofile', fetchUser,
                 if (username.length >= 3) {
                     newAuthUserData = { ...newAuthUserData, username }
                 }
+                else if (username.length <= 3) {
+                    success = false
+                    return res.status(400).send({ success, message: "Username should not be greater than 15 characters" })
+                }
                 else {
                     success = false
                     return res.status(400).send({ success, message: "Username should be atleast of 3 characters long" })
