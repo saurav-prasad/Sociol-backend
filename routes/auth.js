@@ -90,6 +90,7 @@ router.post('/createuser',
 // Route 2: Signin user- POST => /auth/getuser Login required
 
 router.post('/getuser',
+    // request body validation
     [body('email', "Enter a valid email").isEmail(),
     body('password', "Password should be atleast of 6 characters long").isLength({ min: 6 })],
     async (req, res) => {
@@ -119,15 +120,15 @@ router.post('/getuser',
                 return res.status(400).send({ success, message: "Either email or password incorrect" })
             }
 
-            success = true
-
+            // fetching profile data
             const profileData = await profileSchema.findOne({ userId: user.id })
-
+            
             // token generation
             const token = jwt.sign({
                 userId: user.id
             }, JWT_SECRET)
-
+            
+            success = true
             res.send({
                 success, message: "User authenticated", token,
                 data: {

@@ -3,14 +3,15 @@ require('dotenv').config()
 
 const fetchUser = (req, res, next) => {
     let success;
+    // checking the auth token into the header
     const token = req.header('auth-token')
     if (!token) {
         success = false
         return res.status(400).send({ success, message: 'Please authenticate with a valid token' })
     }
+    // verifying the auth token
     try {
         const data = jwt.verify(token, process.env.JWT_SECRET)
-        // console.log("Auth Token ", data);
         req.userId = data.userId
         next()
     } catch (error) {

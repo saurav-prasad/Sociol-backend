@@ -5,7 +5,7 @@ const profileSchema = require('../schema/profile')
 const followSchema = require('../schema/follow')
 
 
-// Route 1: Follow a profile POST /follow/createfollow/:profileId -> login required
+// Route 1: Follow a profile by profile id POST /follow/createfollow/:profileId -> login required
 router.get('/createfollow/:profileId', fetchUser,
     async (req, res) => {
         let success
@@ -58,7 +58,7 @@ router.get('/createfollow/:profileId', fetchUser,
     })
 
 
-// Route 2: Unfollow a profile DELETE /follow/unfollow/:profileId -> login required
+// Route 2: Unfollow a profile by profile id GET /follow/unfollow/:profileId -> login required
 router.get('/unfollow/:profileId', fetchUser,
     async (req, res) => {
         let success
@@ -88,7 +88,7 @@ router.get('/unfollow/:profileId', fetchUser,
                 return res.status(400).send({ success, message: "Something went wrong" })
             }
             // un-following
-            const deleteFollow = await followSchema.findOneAndDelete({
+            await followSchema.findOneAndDelete({
                 followerProfileId: user.id,
                 profileId: follow.id,
             })
@@ -103,7 +103,7 @@ router.get('/unfollow/:profileId', fetchUser,
     })
 
 
-// Route 3: Check if a user follows a profile GET /follow/iffollow/:profileId -> login required
+// Route 3: Check if a user follows a profile by profile id GET /follow/iffollow/:profileId -> login required
 router.get('/iffollow/:profileId', fetchUser,
     async (req, res) => {
         let success;
@@ -111,18 +111,18 @@ router.get('/iffollow/:profileId', fetchUser,
             const userId = req.userId;
             const profileId = req.params.profileId
 
-
+            // checking the user with profile id
             const user = await profileSchema.findOne({ userId })
             if (!user) {
                 success = false
-                return res.status(400).send({ success, message: "Not allowed" })
+                return res.status(400).send({ success, message: "Profile not found" })
             }
             const follows = await profileSchema.findById(profileId)
             if (!follows) {
                 success = false
                 return res.status(400).send({ success, message: "Profile not found" })
             }
-
+            // checking if the user already follows
             const checkFollow = await followSchema.findOne({
                 profileId,
                 followerProfileId: user.id
@@ -131,6 +131,7 @@ router.get('/iffollow/:profileId', fetchUser,
                 success = true
                 return res.send({ success, message: "Not following", data: { following: false } })
             }
+
             success = true
             res.send({ success, message: "Following", data: { following: true } })
         } catch (error) {
@@ -139,17 +140,19 @@ router.get('/iffollow/:profileId', fetchUser,
         }
     })
 
-// Route 4: Get all followers GET /follow/getfollowers/:profileId -> no login required
+// Route 4: Get all followers by profile id GET /follow/getfollowers/:profileId -> no login required
 router.get('/getfollowers/:profileId', async (req, res) => {
     try {
         let success
         const profileId = req.params.profileId
 
+        // chekcking the profile
         const profile = await profileSchema.findById(profileId)
         if (!profile) {
             success = false
             return res.status(400).send({ success, message: "Profile not found" })
         }
+        // fetching followers data
         const followers = await followSchema.find({ profileId })
 
         if (followers?.length === 0) {
@@ -179,7 +182,7 @@ router.get('/getfollowers/:profileId', async (req, res) => {
     }
 })
 
-// Route 5: Get all following profiles  GET /follow/getfollowing -> no login required
+// Route 5: Get all following profiles by profile id  GET /follow/getfollowing -> no login required
 router.get('/getfollowings/:profileId', async (req, res) => {
     try {
         let success
@@ -190,7 +193,7 @@ router.get('/getfollowings/:profileId', async (req, res) => {
             success = false
             return res.status(400).send({ success, message: "Profile not found" })
         }
-
+        // fetching followings data
         const following = await followSchema.find({ followerProfileId: user.id })
 
         if (following?.length === 0) {
@@ -220,17 +223,18 @@ router.get('/getfollowings/:profileId', async (req, res) => {
     }
 })
 
-// Route 6: Get all followers GET /follow/gettotalfollowers/:profileId -> not login required
+// Route 6: Get all followers by profile id GET /follow/gettotalfollowers/:profileId -> not login required
 router.get('/gettotalfollowers/:profileId', async (req, res) => {
     try {
         let success
         const profileId = req.params.profileId
-
+        // checking profile
         const profile = await profileSchema.findById(profileId)
         if (!profile) {
             success = false
             return res.status(400).send({ success, message: "Profile not found" })
         }
+        // fetching total followers
         const followers = await followSchema.find({ profileId })
 
         success = true
@@ -241,7 +245,7 @@ router.get('/gettotalfollowers/:profileId', async (req, res) => {
     }
 })
 
-// Route 7 : Get all following profiles  GET /follow/gettotalfollowing ->  not login required
+// Route 7 : Get all following profiles by profile id  GET /follow/gettotalfollowing ->  not login required
 router.get('/gettotalfollowings/:profileId', async (req, res) => {
     try {
         let success
@@ -252,7 +256,7 @@ router.get('/gettotalfollowings/:profileId', async (req, res) => {
             success = false
             return res.status(400).send({ success, message: "Profile not found" })
         }
-
+        // fetching total followings
         const following = await followSchema.find({ followerProfileId: user.id })
 
         success = true

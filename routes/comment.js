@@ -2,7 +2,6 @@ const express = require('express');
 const fetchUser = require('../middleware/fetchUser');
 const { body, validationResult } = require('express-validator');
 const router = express.Router()
-const userSchema = require('../schema/user')
 const commentSchema = require('../schema/comment')
 const profileSchema = require('../schema/profile')
 const postSchema = require('../schema/post')
@@ -11,6 +10,7 @@ const postSchema = require('../schema/post')
 // Route 1: Create a comment POST /comment/createcomment/:postId login required
 
 router.post('/createcomment/:postId', fetchUser,
+    // request body validation
     [body('comment', 'Comment must be atleast of 1 characters').isLength({ min: 1 })],
     async (req, res) => {
         let success
@@ -61,7 +61,7 @@ router.post('/createcomment/:postId', fetchUser,
         }
     })
 
-// Route 2: Read a comment GET /comment/getcomment/:postId no login required
+// Route 2: Read a comment by post id GET /comment/getcomment/:postId no login required
 router.get('/getcomment/:postId', async (req, res) => {
     let success
     try {
@@ -91,7 +91,6 @@ router.get('/getcomment/:postId', async (req, res) => {
             }
         }))
 
-        console.log(commentData);
         success = true
         res.send({ success, message: "Comments found", data: commentData })
     } catch (error) {
@@ -101,8 +100,9 @@ router.get('/getcomment/:postId', async (req, res) => {
     }
 })
 
-// Route 3: Update a comment POST /comment/updatecomment/:commentId login required
+// Route 3: Update a comment by comment id POST /comment/updatecomment/:commentId login required
 router.post('/updatecomment/:commentId', fetchUser,
+    // request body validation
     [body('comment', "Comment must be atleast of 1 character long").isLength({ min: 1 })],
     async (req, res) => {
         let success
@@ -148,7 +148,8 @@ router.post('/updatecomment/:commentId', fetchUser,
     }
 )
 
-// Route 4: Delete a comment DELETE /comment/deletecomment/:commentId login required
+// Route 4: Delete a comment by commentId DELETE /comment/deletecomment/:commentId login required
+
 router.delete('/deletecomment/:commentId', fetchUser,
     async (req, res) => {
         let success

@@ -44,9 +44,9 @@ router.post('/createpost', fetchUser,
                 comment: 0,
             }
 
-            // 5tilak 11barat  
+            
             const createPost = await postSchema.create(postData)
-            // console.log(createPost);
+
             const newPostData = {
                 profilePhoto: user.profilePhoto,
                 username: user.username,

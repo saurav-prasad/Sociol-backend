@@ -5,7 +5,7 @@ const postSchema = require('../schema/post');
 const fetchUser = require('../middleware/fetchUser');
 const likeSchema = require('../schema/like');
 
-// Route 1: Like a post GET /like/createlike/:postId
+// Route 1: Like a post by post id GET /like/createlike/:postId
 router.get('/like/:postId', fetchUser,
     async (req, res) => {
         let success
@@ -13,11 +13,13 @@ router.get('/like/:postId', fetchUser,
             const userId = req.userId
             const postId = req.params.postId
 
+            // checking the profile
             const user = await profileSchema.findOne({ userId })
             if (!user) {
                 success = false
                 return res.status(400).send({ success, message: "Not allowed" })
             }
+            // checking if the post exists
             const post = await postSchema.findById(postId)
             if (!post) {
                 success = false
@@ -29,12 +31,12 @@ router.get('/like/:postId', fetchUser,
                 postId: post.id
             })
             if (checkLike) {
-                success = false
+                success = true
                 return res.send({ success, message: "Post already liked", data: { liked: false } })
             }
             await postSchema.findByIdAndUpdate(post.id, { like: post.like + 1 })
 
-            const like = await likeSchema.create({
+            await likeSchema.create({
                 profileId: user.id,
                 postId: post.id
             })
@@ -48,7 +50,7 @@ router.get('/like/:postId', fetchUser,
         }
     })
 
-// Route 2: Un-like a post GET /like/unlike/:postId
+// Route 2: Un-like a post by post id GET /like/unlike/:postId
 router.get('/unlike/:postId', fetchUser,
     async (req, res) => {
         let success
@@ -56,11 +58,13 @@ router.get('/unlike/:postId', fetchUser,
             const userId = req.userId
             const postId = req.params.postId
 
+            // checking the profile
             const user = await profileSchema.findOne({ userId })
             if (!user) {
                 success = false
                 return res.status(400).send({ success, message: "Not allowed" })
             }
+            // checking if the post exists
             const post = await postSchema.findById(postId)
             if (!post) {
                 success = false
@@ -73,13 +77,13 @@ router.get('/unlike/:postId', fetchUser,
             })
 
             if (!checkLike) {
-                success = false
+                success = true
                 return res.send({ success, message: "Post not liked, cannot unlike", data: { unLiked: false } })
             }
 
             await postSchema.findByIdAndUpdate(post.id, { like: post.like - 1 })
 
-            const like = await likeSchema.findByIdAndDelete(checkLike.id)
+            await likeSchema.findByIdAndDelete(checkLike.id)
 
             success = true
             res.send({ success, message: "Post un-liked", data: { unLiked: true } })
@@ -90,7 +94,7 @@ router.get('/unlike/:postId', fetchUser,
         }
     })
 
-// Route 3: check if a user liked a post GET /like/iflike/:postId
+// Route 3: check if a user liked a post by post id GET /like/iflike/:postId
 router.get('/iflike/:postId', fetchUser,
     async (req, res) => {
         let success
@@ -98,11 +102,14 @@ router.get('/iflike/:postId', fetchUser,
             const userId = req.userId
             const postId = req.params.postId
 
+            // checking the profile
             const user = await profileSchema.findOne({ userId })
             if (!user) {
                 success = false
                 return res.status(400).send({ success, message: "Not allowed" })
             }
+
+            // checking if the post exists
             const post = await postSchema.findById(postId)
             if (!post) {
                 success = false
