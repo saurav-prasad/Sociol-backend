@@ -24,7 +24,7 @@ router.post('/createuser',
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
             success = false
-            return res.send({ success, message: errors.array()[0].msg })
+            return res.status(400).send({ success, message: errors.array()[0].msg })
         }
         try {
             const { password, email, username, phone } = req.body
