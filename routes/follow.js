@@ -25,6 +25,12 @@ router.get('/createfollow/:profileId', fetchUser,
                 success = false
                 return res.status(400).send({ success, message: "Profile not found" })
             }
+
+            // checking security issues
+            if (userId === profileId) {
+                success = false
+                return res.status(400).send({ success, message: "Not allowed" })
+            }
             // checking if the user already follows
             const follows = await followSchema.findOne({
                 followerProfileId: user.id,
@@ -226,7 +232,7 @@ router.get('/gettotalfollowers/:profileId', async (req, res) => {
             return res.status(400).send({ success, message: "Profile not found" })
         }
         const followers = await followSchema.find({ profileId })
-        
+
         success = true
         res.send({ success, message: "Followers present", data: { totalFollowers: followers?.length } })
     } catch (error) {

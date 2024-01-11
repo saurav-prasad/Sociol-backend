@@ -35,7 +35,7 @@ router.get('/getprofile/:profileId', async (req, res) => {
         res.status(500).send({ success, message: "Internal server error occurred" })
     }
 })
-// Route 2: Read a profile- GET /profile/getprofile/:username => not required login
+// Route 2: Read a profile by username- GET /profile/getprofile/:username => no required login
 
 router.get('/getprofilebyusername/:username', async (req, res) => {
     let success
@@ -50,6 +50,37 @@ router.get('/getprofilebyusername/:username', async (req, res) => {
 
         success = true
         res.send({ success, message: "Profile found", data: profile })
+
+    } catch (error) {
+        success = false
+        res.status(500).send({ success, message: "Internal server error occurred" })
+    }
+})
+// Route 3: get all profile- GET /getallprofile => no required login
+
+router.get('/getallprofile', async (req, res) => {
+    let success
+    try {
+        const profiles = await profileSchema.find()
+        if (!profiles) {
+            success = false
+            return res.status(400).send({ success, message: "Something went wrong" })
+        }
+
+        const profilesData = await Promise.all(profiles.map(async (data) => {
+            // console.log(data);
+            const user = await profileSchema.findById(data.id)
+            // console.log(user);
+            return {
+                id: data.id,
+                profileId: user.id,
+                username: user.username,
+                profilePhoto: user.profilePhoto,
+            }
+        }))
+
+        success = true
+        res.send({ success, message: "Profile found", data: [...profilesData] })
 
     } catch (error) {
         success = false
