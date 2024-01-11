@@ -125,14 +125,14 @@ router.post('/updateprofile', fetchUser,
             if (profilePhoto) { newProfileData = { ...newProfileData, profilePhoto } }
             if (phone) { newProfileData = { ...newProfileData, phone } }
             if (username) {
-                if (username.length >= 3) {
+                if (username.length >= 3 && username.length <= 15 ) {
                     newAuthUserData = { ...newAuthUserData, username }
                 }
-                else if (username.length <= 3) {
+                else if (username.length > 15) {
                     success = false
                     return res.status(400).send({ success, message: "Username should not be greater than 15 characters" })
                 }
-                else {
+                else if(username.length < 3) {
                     success = false
                     return res.status(400).send({ success, message: "Username should be atleast of 3 characters long" })
                 }

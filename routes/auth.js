@@ -36,6 +36,7 @@ router.post('/createuser',
                 success = false
                 return res.status(400).send({ success, message: "Username already taken" })
             }
+            
             // checking the email
             user = await userSchema.findOne({ email })
             if (user) {
