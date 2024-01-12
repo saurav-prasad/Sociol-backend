@@ -15,7 +15,7 @@
 | `Password` | `string` | **Required**. min 6 characters |
 | `Phone` | `number` | **Optional** |
 
-Returns an object containing success, data, auth-token, message
+Returns an object containing success, data, auth-token, message.
 
 - Get user by email and password
 ```http
@@ -27,7 +27,7 @@ Returns an object containing success, data, auth-token, message
 | `email` | `email` | **Required** |
 | `Password` | `string` | **Required**. min 6 characters |
 
-Returns an object containing success, data, auth-token, message
+Returns an object containing success, data, auth-token, message.
 
 
 - Get user by auth-token
@@ -39,7 +39,7 @@ Returns an object containing success, data, auth-token, message
 | :-------- | :------- | :------------------------- |
 | `auth-token` | `string` | **Required** |
 
-Returns an object containing success, data, message
+Returns an object containing success, data, message.
 
 
 #### **Profiles**
@@ -49,14 +49,14 @@ Returns an object containing success, data, message
   GET /profile/getprofile/:{profileId}
 ```
 
-Returns an object containing success, data, message
+Returns an object containing success, data, message.
 
 - Get user by username
 ```http
   GET /profile/getprofile/:{username}
 ```
 
-Returns an object containing success, data, message
+Returns an object containing success, data, message.
 
 
 - Get all profiles
@@ -64,7 +64,7 @@ Returns an object containing success, data, message
   GET /profile/getallprofiles
 ```
 
-Returns an object containing success, data, message
+Returns an object containing success, data, message.
 
 - Get profile by auth-token
 ```http
@@ -75,7 +75,7 @@ Returns an object containing success, data, message
 | :-------- | :------- | :------------------------- |
 | `auth-token` | `string` | **Required** |
 
-Returns an object containing success, data, message
+Returns an object containing success, data, message.
 
 - Update a profile by auth-token
 ```http
@@ -96,7 +96,7 @@ Returns an object containing success, data, message
 | `username` | `string` | **Optional** max 15 & min 3 characters |
 | `email` | `email` | **Optional** |
 
-Returns an object containing success, data, message
+Returns an object containing success, data, message.
 
 
 #### **Posts**
@@ -116,14 +116,14 @@ Returns an object containing success, data, message
 | `image` | `url` | **Optional** |
 | `text` | `string` | **Optional** |
 
-Returns an object containing success, data, message
+Returns an object containing success, data, message.
 
 - Get a post by post id
 ```http
   GET /post/getpost/:{postId}
 ```
 
-Returns an object containing success, data, message
+Returns an object containing success, data, message.
 
 
 - Get all the post of a user by profile id
@@ -135,7 +135,7 @@ Returns an object containing success, data, message
 | :-------- | :------- | :------------------------- |
 | `auth-token` | `string` | **Required** |
 
-Returns an object containing success, data, message
+Returns an object containing success, data, message.
 
 
 - Get all the posts
@@ -143,7 +143,7 @@ Returns an object containing success, data, message
   GET /post/getallpost
 ```
 
-Returns an object containing success, data, message
+Returns an object containing success, data, message.
 
 
 - Get all the post by auth token
@@ -155,7 +155,7 @@ Returns an object containing success, data, message
 | :-------- | :------- | :------------------------- |
 | `auth-token` | `string` | **Required** |
 
-Returns an object containing success, data, message
+Returns an object containing success, data, message.
 
 
 - Get all the post by post id
@@ -172,7 +172,7 @@ Returns an object containing success, data, message
 | `image` | `url` | **Optional** |
 | `text` | `string` | **Optional** |
 
-Returns an object containing success, data, message
+Returns an object containing success, data, message.
 
 - Delete a post by post id
 
@@ -185,7 +185,7 @@ Returns an object containing success, data, message
 | `auth-token` | `string` | **Required** |
 
 
-Returns an object containing success, message
+Returns an object containing success, message.
 
 #### **Comments**
 
@@ -203,14 +203,14 @@ Returns an object containing success, message
 | :-------- | :------- | :------------------------- |
 | `comment` | `string` | **Required** min 1 character |
 
-Returns an object containing success, data, message
+Returns an object containing success, data, message.
 
 - Get all the comment of a post by post id
 ```http
   GET /comment/getcomment/:{postId}
 ```
 
-Returns an object containing success, data, message
+Returns an object containing success, data, message.
 
 
 - Update a comment by comment id
@@ -226,7 +226,7 @@ Returns an object containing success, data, message
 | :-------- | :------- | :------------------------- |
 | `comment` | `string` | **Required** min 1 character |
 
-Returns an object containing success, data, message
+Returns an object containing success, data, message.
 
 - Delete a comment by comment id
 ```http
@@ -238,7 +238,7 @@ Returns an object containing success, data, message
 | `auth-token` | `string` | **Required** |
 
 
-Returns an object containing success, message
+Returns an object containing success, message.
 
 #### **Likes**
 
@@ -253,7 +253,7 @@ Returns an object containing success, message
 | `auth-token` | `string` | **Required** |
 
 
-Returns an object containing success, data, message
+Returns an object containing success, data, message.
 
 - Unlike a post by post id
 ```http
@@ -263,7 +263,7 @@ Returns an object containing success, data, message
 | :-------- | :------- | :------------------------- |
 | `auth-token` | `string` | **Required** |
 
-Returns an object containing success, data, message
+Returns an object containing success, data, message.
 
 - Check if a post is liked or not
 ```http
@@ -273,7 +273,92 @@ Returns an object containing success, data, message
 | :-------- | :------- | :------------------------- |
 | `auth-token` | `string` | **Required** |
 
-Returns an object containing success, data, message
+Returns an object containing success, data, message.
+
+#### **Follows**
+
+
+- Follow a profile by profile id
+```http
+  GET /follow/createfollow/:{profileId}
+```
+
+| Header | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `auth-token` | `string` | **Required** |
+
+Returns an object containing success, data, message.
+
+- Unfollow a profile by profile id
+```http
+  GET /follow/unfollow/:{profileId}
+```
+
+| Header | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `auth-token` | `string` | **Required** |
+
+Returns an object containing success, message.
+
+
+- Check if a user follows a profile or not
+```http
+  GET /follow/iffollow/:{profileId}
+```
+
+| Header | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `auth-token` | `string` | **Required** |
+
+Returns an object containing success, data, message.
+
+- Get all the followers of a profile by profile id
+```http
+  GET /follow/getfollowers/:{profileId}
+```
+
+| Header | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `auth-token` | `string` | **Required** |
+
+Returns an object containing success, data, message.
+
+
+- Get all the followings of a profile by profile id
+```http
+  GET /follow/getfollowings/:{profileId}
+```
+
+| Header | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `auth-token` | `string` | **Required** |
+
+Returns an object containing success, data, message.
+
+
+- Get total number of followers of a profile by profile id
+```http
+  GET /follow/gettotalfollowers/:{profileId}
+```
+
+| Header | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `auth-token` | `string` | **Required** |
+
+Returns an object containing success, data, message.
+
+- Get total number of followings of a profile by profile id
+```http
+  GET /follow/gettotalfollowings/:{profileId}
+```
+
+| Header | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `auth-token` | `string` | **Required** |
+
+Returns an object containing success, data, message.
+
+
 
 
 
