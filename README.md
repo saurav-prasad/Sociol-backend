@@ -1,7 +1,7 @@
 
 ## API Reference
 
-#### Authentication
+#### **Authentication**
 
 - Create a user
 ```http
@@ -42,7 +42,7 @@ Returns an object containing success, data, auth-token, message
 Returns an object containing success, data, message
 
 
-#### Profiles
+#### **Profiles**
 
 - Get a profile by profile id
 ```http
@@ -99,6 +99,93 @@ Returns an object containing success, data, message
 Returns an object containing success, data, message
 
 
+#### **Posts**
+
+
+- Create a post
+```http
+  POST /post/createuser
+```
+
+| Header | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `auth-token` | `string` | **Required** |
+
+| Body | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `image` | `url` | **Optional** |
+| `text` | `string` | **Optional** |
+
+Returns an object containing success, data, message
+
+- Get a post by post id
+```http
+  GET /post/getpost/:{postId}
+```
+
+Returns an object containing success, data, message
+
+
+- Get all the post of a user by profile id
+```http
+  GET /post/getpostbyprofileid/:{profileId}
+```
+
+| Header | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `auth-token` | `string` | **Required** |
+
+Returns an object containing success, data, message
+
+
+- Get all the posts
+```http
+  GET /post/getallpost
+```
+
+Returns an object containing success, data, message
+
+
+- Get all the post by auth token
+```http
+  GET /post/fetchpost
+```
+
+| Header | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `auth-token` | `string` | **Required** |
+
+Returns an object containing success, data, message
+
+
+- Get all the post by post id
+```http
+  POST /post/updatepost/:{postId}
+```
+
+| Header | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `auth-token` | `string` | **Required** |
+
+| Body | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `image` | `url` | **Optional** |
+| `text` | `string` | **Optional** |
+
+Returns an object containing success, data, message
+
+- Delete a post by post id
+
+```http
+  DELETE /post/deletepost/:{postId}
+```
+
+| Header | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `auth-token` | `string` | **Required** |
+
+
+Returns an object containing success, message
 
 
 
