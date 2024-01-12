@@ -240,3 +240,40 @@ Returns an object containing success, data, message
 
 Returns an object containing success, message
 
+#### **Likes**
+
+
+- Like a post by post id
+```http
+  GET /like/like/:{postId}
+```
+
+| Header | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `auth-token` | `string` | **Required** |
+
+
+Returns an object containing success, data, message
+
+- Unlike a post by post id
+```http
+  GET /like/unlike/:{postId}
+```
+| Header | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `auth-token` | `string` | **Required** |
+
+Returns an object containing success, data, message
+
+- Check if a post is liked or not
+```http
+  GET /like/iflike/:{postId}
+```
+| Header | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `auth-token` | `string` | **Required** |
+
+Returns an object containing success, data, message
+
+
+
