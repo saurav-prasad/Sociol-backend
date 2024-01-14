@@ -1,3 +1,25 @@
+## Tech Stack
+
+This backend was built using the following technologies and tools:
+
+- Backend:
+  - Node
+  - Express
+  - MongoDB
+  - Mongoose
+  - Json Web Token
+  - BcryptJs
+  - Express Validator
+  - Firebase
+  - Cors
+
+
+- Hosting & Deployment:
+  - Vercel
+
+- Version Control:
+  - Git
+  - GitHub
 
 ## API Reference
 
