@@ -1,3 +1,16 @@
+
+# Sociol
+
+It is a backend application for a social media app with all the necessary routes required for creating a social media application. 
+## Available routes
+
+- Authentications
+- Profiles
+- Posts
+- Likes
+- Comments
+- Follow
+
 ## Tech Stack
 
 This backend was built using the following technologies and tools:
@@ -20,6 +33,19 @@ This backend was built using the following technologies and tools:
 - Version Control:
   - Git
   - GitHub
+
+## Environment Variables
+
+To run this application, you will need to add the url of your mongodb database url as a environment variable to your .env file.
+
+`MONGO_URI` will be name of the environment variable.
+
+
+
+## URL
+
+The hosted url of the app is https://sociol-backend.vercel.app/
+
 
 ## API Reference
 
@@ -384,3 +410,16 @@ Returns an object containing success, data, message.
 
 
 
+## Installation
+
+Provide instructions for setting up and running your project locally. Include any prerequisites, environment setup, and installation steps.
+
+```bash
+# Clone the repository
+git clone https://github.com/saurav-prasad/Sociol-backend.git
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm start
