@@ -1,7 +1,7 @@
 
 # Sociol
 
-It is a backend application for a social media app with all the necessary routes required for creating a social media application. 
+It is a backend application designed for a social media app with all the essential routes required for creating a social media application.
 ## Available routes
 
 - Authentications
