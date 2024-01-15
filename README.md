@@ -323,6 +323,12 @@ Returns an object containing success, data, message.
 
 Returns an object containing success, data, message.
 
+- Get all the profiles of who liked a post
+```http
+  GET /like/getlikes/:{postId}
+```
+Returns an object containing success, data, message.
+
 #### **Follows**
 
 
