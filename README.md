@@ -127,7 +127,7 @@ Returns an object containing success, data, message.
 
 - Update a profile by auth-token
 ```http
-  GET /profile/fetchuser
+  POST /profile/updateprofile
 ```
 
 | Header | Type     | Description                |
