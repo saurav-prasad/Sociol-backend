@@ -135,4 +135,46 @@ router.get('/iflike/:postId', fetchUser,
         }
     })
 
+
+// Route 4: Get all likes by post id GET /like/getlikes/:postId -> no login required
+router.get('/getlikes/:postId', async (req, res) => {
+    try {
+        let success
+        const postId = req.params.postId
+
+        // chekcking the post
+        const posts = await postSchema.findById(postId)
+        if (!posts) {
+            success = false
+            return res.status(400).send({ success, message: "Posts not found" })
+        }
+        // fetching likes data
+        const likes = await likeSchema.find({ postId })
+
+        if (likes?.length === 0) {
+            success = true
+            return res.send({ success, message: "No likes", data: [] })
+        }
+
+        const likesData = await Promise.all(
+            likes.map(async (data) => {
+                const profileData = await profileSchema.findById(data.profileId);
+
+                return {
+                    id: data.id,
+                    profileId: profileData.id,
+                    profilePhoto: profileData.profilePhoto,
+                    username: profileData.username,
+                    about: profileData.about
+                };
+            })
+        );
+
+        success = true
+        res.send({ success, message: "Likes present", data: likesData })
+    } catch (error) {
+        success = false
+        res.status(500).send({ success, message: "Internal server error occurred" })
+    }
+})
 module.exports = router

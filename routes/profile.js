@@ -35,6 +35,7 @@ router.get('/getprofile/:profileId', async (req, res) => {
         res.status(500).send({ success, message: "Internal server error occurred" })
     }
 })
+
 // Route 2: Read a profile by username- GET /profile/getprofile/:username => no required login
 
 router.get('/getprofilebyusername/:username', async (req, res) => {
@@ -88,7 +89,7 @@ router.get('/getallprofile', async (req, res) => {
     }
 })
 
-// Route 3: Read a profile- POST /profile/getprofile/:profileId => required login
+// Route 3: Read a profile- GET /profile/fetchprofile => required login
 
 router.get('/fetchprofile', fetchUser,
     async (req, res) => {
