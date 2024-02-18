@@ -4,6 +4,8 @@ const router = express.Router()
 const profileSchema = require('../schema/profile')
 const userSchema = require('../schema/user')
 const postSchema = require('../schema/post');
+const commentSchema = require('../schema/comment')
+const likeSchema = require('../schema/like')
 
 // Route 1: Create a post POST /post/createpost => required login
 
@@ -44,7 +46,7 @@ router.post('/createpost', fetchUser,
                 comment: 0,
             }
 
-            
+
             const createPost = await postSchema.create(postData)
 
             const newPostData = {
@@ -282,9 +284,12 @@ router.delete('/deletepost/:postId', fetchUser,
                 return res.status(400).send({ success, message: "Post not found" })
             }
 
+            //  delting the likes
+            await likeSchema.deleteMany({ postId: postId })
+            //  delting the comments
+            await commentSchema.deleteMany({ postId: postId })
             //  delting the post
-
-            const deletedPost = await postSchema.findByIdAndDelete(postId)
+            await postSchema.findByIdAndDelete(postId)
             success = true
             res.send({ success, message: "Post deleted" })
         } catch (error) {
