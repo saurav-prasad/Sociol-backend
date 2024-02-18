@@ -127,7 +127,7 @@ Returns an object containing success, data, message.
 
 - Update a profile by auth-token
 ```http
-  GET /profile/fetchuser
+  POST /profile/updateprofile
 ```
 
 | Header | Type     | Description                |
@@ -321,6 +321,12 @@ Returns an object containing success, data, message.
 | :-------- | :------- | :------------------------- |
 | `auth-token` | `string` | **Required** |
 
+Returns an object containing success, data, message.
+
+- Get all the profiles of who liked a post
+```http
+  GET /like/getlikes/:{postId}
+```
 Returns an object containing success, data, message.
 
 #### **Follows**
